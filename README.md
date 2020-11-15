@@ -15,6 +15,15 @@ Serve app
 ```BASH
 flask run  
 ```
+When updating the python version it is advised to run 
+```BASH
+pipenv --rm  
+```
+and 
+```BASH
+pipenv install
+```
+again otherwise the python version won't update in the existing environment...
 
 ## Deployment
 ### Deploy to Heroku
