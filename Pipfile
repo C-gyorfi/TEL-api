@@ -9,6 +9,8 @@ verify_ssl = true
 flask = "*"
 python-dotenv = "*"
 gunicorn = "*"
+pytest = "*"
+assertpy = "*"
 
 [requires]
 python_version = "3.9"
