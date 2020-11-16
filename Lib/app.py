@@ -1,9 +1,7 @@
 from flask import jsonify
-from .app_factory import create_app
+from .app_factory import app
 from .db import db
 from .models import FoodItem, food_items_schema, FoodStock
-
-app = create_app
 
 @app.route('/')
 def home():
