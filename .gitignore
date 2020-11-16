@@ -1,1 +1,5 @@
+# Secrets
 .env
+
+# local sqlite databases
+*.db
