@@ -61,7 +61,12 @@ We needed to install the following packages in our project:
 
 After `git push heroku master`, run the create command:
 ```BASH
-heroku run flask db_create
+heroku run bash
+```
+cd into the `Lib` folder and run
+
+```BASH
+flask db_create
 ```
 
 If needed, connect to the the `production` db in your terminal by changing the env varible `DATABASE_URL` to this connection URL:
