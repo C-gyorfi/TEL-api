@@ -9,9 +9,12 @@ def home():
 
 @app.route('/api/<int:food_stock_id>/food_items/')
 def list_food_items(food_stock_id: int):
-  food_items = FoodItem.query.all()
-  food_items_schema.dump(food_items)
-  return jsonify(food_stock_id="{0}".format(food_stock_id), food_items=food_items_schema.dump(food_items))
+  try:
+    food_items = FoodItem.query.all()
+    return jsonify(food_stock_id="{0}".format(food_stock_id), food_items=food_items_schema.dump(food_items))
+  except Exception as e:
+    print(e)
+    return jsonify(status='Something bad happened')
 
 @app.cli.command('db_create')
 def db_create():
