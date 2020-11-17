@@ -5,7 +5,7 @@ from Lib.db import db
 import Lib.models
 import os
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(autouse=True)
 def setup(request):
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('TEST_DATABASE_URL')
     db.drop_all()
@@ -13,6 +13,12 @@ def setup(request):
 
 def test_uses_the_correct_database():
     assert_that(app.config["SQLALCHEMY_DATABASE_URI"]).contains('test.db')
+
+def test_when_requested_resource_does_not_exist():
+    response = app.test_client().get('/api/1/food_items/')
+
+    assert_that(response.status_code).is_equal_to(200)
+    assert_that(response.data).contains(b'{"errorCode":"NOT_FOUND","message":"The requested resource does not exist"}\n')
 
 def test_can_retrieve_food_items_for_a_food_stock():
     # Given there are food stock
@@ -31,7 +37,7 @@ def test_can_retrieve_food_items_for_a_food_stock():
     db.session.commit()
 
     # When I call the list food items endpoint with a list ID
-    response = app.test_client().get('/api/1/food_items/')
+    response = app.test_client().get("/api/% s/food_items/"%(food_stock.id))
 
     # Then I can see the three food items
     assert_that(response.status_code).is_equal_to(200)
@@ -42,4 +48,28 @@ def test_can_retrieve_food_items_for_a_food_stock():
         b'{"food_stock_id":1,"id":3,"name":"milk"}],' +
         b'"food_stock_id":"1"}\n'
     )
+
+def test_can_only_return_where_food_stock_id_matches():
+    food_stock = Lib.models.FoodStock(name='fridge')
+    another_food_stock = Lib.models.FoodStock(name='under the pillow')
+    db.session.add(food_stock)
+    db.session.add(another_food_stock)
+    db.session.commit()
+
+    butter = Lib.models.FoodItem(name='butter', food_stock_id=food_stock.id)
+    bread = Lib.models.FoodItem(name='bread', food_stock_id=another_food_stock.id)
+    db.session.add(butter)
+    db.session.add(bread)
+
+    db.session.commit()
+
+    response = app.test_client().get("/api/% s/food_items/"%(food_stock.id))
+
+    assert_that(response.status_code).is_equal_to(200)
+    assert_that(response.data).is_equal_to(
+        b'{"food_items":' +
+        b'[{"food_stock_id":1,"id":1,"name":"butter"}],' + 
+        b'"food_stock_id":"1"}\n'
+    )
+    assert_that(response.data).does_not_contain(b'bread')
 
