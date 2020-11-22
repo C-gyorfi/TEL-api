@@ -4,6 +4,7 @@ from Lib.app import app
 from Lib.db import db
 import Lib.models
 import os
+import datetime
 
 @pytest.fixture(autouse=True)
 def setup(request):
@@ -27,9 +28,9 @@ def test_can_retrieve_food_items_for_a_food_stock():
     db.session.commit()
 
     # and there are three food items
-    butter = Lib.models.FoodItem(name='butter', food_stock_id=food_stock.id)
-    bread = Lib.models.FoodItem(name='bread', food_stock_id=food_stock.id)
-    milk = Lib.models.FoodItem(name='milk', food_stock_id=food_stock.id)
+    butter = Lib.models.FoodItem(name='butter', expiry_date=datetime.datetime(2020, 5, 17), food_stock_id=food_stock.id)
+    bread = Lib.models.FoodItem(name='bread', expiry_date=datetime.datetime(2020, 5, 18), food_stock_id=food_stock.id)
+    milk = Lib.models.FoodItem(name='milk', expiry_date=datetime.datetime(2020, 5, 19), food_stock_id=food_stock.id)
     db.session.add(butter)
     db.session.add(bread)
     db.session.add(milk)
@@ -43,9 +44,9 @@ def test_can_retrieve_food_items_for_a_food_stock():
     assert_that(response.status_code).is_equal_to(200)
     assert_that(response.data).is_equal_to(
         b'{"food_items":' +
-        b'[{"food_stock_id":1,"id":1,"name":"butter"},' + 
-        b'{"food_stock_id":1,"id":2,"name":"bread"},' +
-        b'{"food_stock_id":1,"id":3,"name":"milk"}],' +
+        b'[{"expiry_date":"2020-05-17","food_stock_id":1,"id":1,"name":"butter"},' + 
+        b'{"expiry_date":"2020-05-18","food_stock_id":1,"id":2,"name":"bread"},' +
+        b'{"expiry_date":"2020-05-19","food_stock_id":1,"id":3,"name":"milk"}],' +
         b'"food_stock_id":"1"}\n'
     )
 
@@ -56,8 +57,8 @@ def test_can_only_return_where_food_stock_id_matches():
     db.session.add(another_food_stock)
     db.session.commit()
 
-    butter = Lib.models.FoodItem(name='butter', food_stock_id=food_stock.id)
-    bread = Lib.models.FoodItem(name='bread', food_stock_id=another_food_stock.id)
+    butter = Lib.models.FoodItem(name='butter', expiry_date=datetime.datetime(2020, 5, 17), food_stock_id=food_stock.id)
+    bread = Lib.models.FoodItem(name='bread', expiry_date=datetime.datetime(2020, 5, 17), food_stock_id=another_food_stock.id)
     db.session.add(butter)
     db.session.add(bread)
 
@@ -68,7 +69,7 @@ def test_can_only_return_where_food_stock_id_matches():
     assert_that(response.status_code).is_equal_to(200)
     assert_that(response.data).is_equal_to(
         b'{"food_items":' +
-        b'[{"food_stock_id":1,"id":1,"name":"butter"}],' + 
+        b'[{"expiry_date":"2020-05-17","food_stock_id":1,"id":1,"name":"butter"}],' + 
         b'"food_stock_id":"1"}\n'
     )
     assert_that(response.data).does_not_contain(b'bread')
