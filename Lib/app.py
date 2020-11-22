@@ -1,7 +1,8 @@
-from flask import jsonify
+from flask import request, jsonify
 from Lib.app_factory import app
 from Lib.db import db
-from Lib.models import FoodItem, food_items_schema, FoodStock
+from Lib.models import FoodItem, food_items_schema, food_item_schema, FoodStock
+from datetime import datetime
 
 @app.route('/')
 def home():
@@ -18,6 +19,20 @@ def list_food_items(food_stock_id: int):
   except Exception as e:
     print(e)
     return jsonify(status='Something bad happened')
+
+@app.route('/api/<int:food_stock_id>/food_item/', methods=['POST'])
+def add_food_item_to_food_stock(food_stock_id):
+  food_stock = FoodStock.query.filter_by(id=food_stock_id).first()
+  if food_stock:
+    name = request.get_json()['name']
+    expiry_date = request.get_json()['expiry_date']
+    new_item = FoodItem(name=name, expiry_date=datetime.strptime(expiry_date, '%Y-%m-%d'), food_stock_id=food_stock.id)
+    db.session.add(new_item)
+    db.session.commit()
+
+    return jsonify(food_item_schema.dump(new_item))
+  else:
+    return jsonify(errorCode='NOT_FOUND', message='Food stock does not exist')
 
 @app.cli.command('db_create')
 def db_create():
