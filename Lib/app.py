@@ -3,26 +3,27 @@ from Lib.app_factory import app
 from Lib.db import db
 from Lib.models import FoodItem, food_items_schema, food_item_schema, FoodStock
 from datetime import datetime
+from flask_cors import cross_origin
 
 @app.route('/')
 def home():
   return '<h1>Hello, have you saved food today?:)</h1>'
 
 @app.route('/api/<int:food_stock_id>/food_items/')
+@cross_origin()
 def list_food_items(food_stock_id: int):
   try:
     food_items = FoodItem.query.filter_by(food_stock_id=food_stock_id).all()
     if not food_items:
       return jsonify(errorCode="NOT_FOUND", message="The requested resource does not exist")
     else:
-      response = jsonify(food_stock_id="{0}".format(food_stock_id), food_items=food_items_schema.dump(food_items))
-      response.headers.add("Access-Control-Allow-Origin", "*")
-      return response
+      return jsonify(food_stock_id="{0}".format(food_stock_id), food_items=food_items_schema.dump(food_items))
   except Exception as e:
     print(e)
     return jsonify(status='Something bad happened')
 
 @app.route('/api/<int:food_stock_id>/food_item/', methods=['POST'])
+@cross_origin()
 def add_food_item_to_food_stock(food_stock_id):
   food_stock = FoodStock.query.filter_by(id=food_stock_id).first()
   if food_stock:
