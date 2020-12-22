@@ -9,7 +9,6 @@ Setup and serve
 pipenv install
 ```
 Run server
-Serve app
 ```BASH
 pipenv run flask run
 ```
@@ -22,6 +21,28 @@ The [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) config uses t
 
 ### Setup test db
 Use the `TEST_DATABASE_URL` env variable to link test db when running in `test` env
+
+## Test
+Run tests using
+```BASH
+pipenv run pytest  
+```
+
+## Setup DB
+Create DB 
+```BASH
+pipenv run flask db_create
+```
+
+Seeding some data
+```BASH
+pipenv run flask db_seed  
+```
+
+Drop DB
+```BASH
+pipenv run flask db_drop  
+```
 
 ## Deployment
 ### Deploy to Heroku
@@ -72,5 +93,3 @@ If needed, connect to the the `production` db in your terminal by changing the e
 ```
 heroku pg:credentials:url DATABASE
 ```
-
-

@@ -6,7 +6,7 @@ from datetime import datetime
 
 @app.route('/')
 def home():
-  return '<h1>Hello, have you saved food today?:)</h1>'
+  return '<h1>To Eat List API 🦑🥒🥢</h1>'
 
 @app.route('/api/<int:food_stock_id>/food_items/')
 def list_food_items(food_stock_id: int):
