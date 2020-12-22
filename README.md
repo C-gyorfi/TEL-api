@@ -1,29 +1,27 @@
 # To Eat List API 🦑🥒🥢
 
+This project is the backend for a `To Eat List` application. `To Eat List` allows managing your home food stock. Please note, this is a pet project, and due to the limited time and resources, it does not always follow best practices.
+
 ## Setup
 
 Setup and serve
 ```BASH
 pipenv install
 ```
-Enter the shell
-```BASH
-pipenv shell
-```
 Run server
 Serve app
 ```BASH
-flask run  
+pipenv run flask run
 ```
-When updating the python version it is advised to run 
-```BASH
-pipenv --rm  
-```
-and 
-```BASH
-pipenv install
-```
-again otherwise the python version won't update in the existing environment...
+
+## Setup environment
+There is a [.env.sample](./.env.sample) file with the environment variables that can be defined.
+
+### Setup CORS
+The [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) config uses the `ALLOWED_ORIGINS` env variable to set allowed origins
+
+### Setup test db
+Use the `TEST_DATABASE_URL` env variable to link test db when running in `test` env
 
 ## Deployment
 ### Deploy to Heroku
@@ -75,20 +73,4 @@ If needed, connect to the the `production` db in your terminal by changing the e
 heroku pg:credentials:url DATABASE
 ```
 
-## Useful for poking sqlite db from CLI
-You can run queries in the command line by
-Opening a console
-```BASH
-sqlite3 <db/file/path>
-```
-show tables
-```SQL
-.tables
-```
-
-run some query 
-```SQL
-select * from users;
-```
-exit -> `crtl+D`
 
