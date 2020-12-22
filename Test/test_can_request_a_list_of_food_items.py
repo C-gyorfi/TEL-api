@@ -74,3 +74,25 @@ def test_can_only_return_where_food_stock_id_matches():
     )
     assert_that(response.data).does_not_contain(b'bread')
 
+def test_food_items_are_ordered_by_expiry_date():
+    food_stock = Lib.models.FoodStock(name='fridge')
+    db.session.add(food_stock)
+    db.session.commit()
+
+    new_item = Lib.models.FoodItem(name='new egg', expiry_date=datetime.datetime(2020, 5, 18), food_stock_id=food_stock.id)
+    old_item = Lib.models.FoodItem(name='old milk', expiry_date=datetime.datetime(2020, 1, 18), food_stock_id=food_stock.id)
+    db.session.add(new_item)
+    db.session.add(old_item)
+    db.session.commit()
+
+    # When I call the list food items endpoint with a list ID
+    response = app.test_client().get("/api/% s/food_items/"%(food_stock.id))
+
+    # Then I can see the three food items
+    assert_that(response.status_code).is_equal_to(200)
+    assert_that(response.data).is_equal_to(
+        b'{"food_items":' +
+        b'[{"expiry_date":"2020-01-18","food_stock_id":1,"id":2,"name":"old milk"},' + 
+        b'{"expiry_date":"2020-05-18","food_stock_id":1,"id":1,"name":"new egg"}],' +
+        b'"food_stock_id":"1"}\n'
+    )

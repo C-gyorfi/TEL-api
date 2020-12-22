@@ -11,7 +11,7 @@ def home():
 @app.route('/api/<int:food_stock_id>/food_items/')
 def list_food_items(food_stock_id: int):
   try:
-    food_items = FoodItem.query.filter_by(food_stock_id=food_stock_id).all()
+    food_items = FoodItem.query.filter_by(food_stock_id=food_stock_id).order_by(FoodItem.expiry_date.asc()).all()
     if not food_items:
       return jsonify(errorCode="NOT_FOUND", message="The requested resource does not exist")
     else:
