@@ -14,15 +14,13 @@ def setup(request):
 
 def test_when_food_stock_does_not_exists():
     response = app.test_client().delete('/api/food_item/1')
-    assert_that(response.status_code).is_equal_to(200)
+    assert_that(response.status_code).is_equal_to(404)
     assert_that(response.data).contains(b'{"errorCode":"NOT_FOUND","message":"Food item not found"}\n')
 
 def test_can_delete_a_food_item():
-    # Given there are food stock with an item
+    # Given there is a food stock with an item
     food_stock = Lib.models.FoodStock(name='fridge')
     db.session.add(food_stock)
-    db.session.commit()
-
     butter = Lib.models.FoodItem(name='butter', expiry_date=datetime.datetime(2020, 5, 17), food_stock_id=food_stock.id)
     db.session.add(butter)
     db.session.commit()

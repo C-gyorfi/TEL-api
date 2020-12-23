@@ -18,7 +18,7 @@ def test_uses_the_correct_database():
 def test_when_requested_resource_does_not_exist():
     response = app.test_client().get('/api/1/food_items/')
 
-    assert_that(response.status_code).is_equal_to(200)
+    assert_that(response.status_code).is_equal_to(404)
     assert_that(response.data).contains(b'{"errorCode":"NOT_FOUND","message":"The requested resource does not exist"}\n')
 
 def test_can_retrieve_food_items_for_a_food_stock():

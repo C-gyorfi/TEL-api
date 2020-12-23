@@ -16,7 +16,7 @@ def test_when_food_stock_does_not_exists():
     response = app.test_client().post('/api/1/food_item/', json={
         'name': 'hot pot', 'expiry_date': '2020-05-18'
     })
-    assert_that(response.status_code).is_equal_to(200)
+    assert_that(response.status_code).is_equal_to(404)
     assert_that(response.data).contains(b'{"errorCode":"NOT_FOUND","message":"Food stock does not exist"}\n')
 
 def test_can_create_a_new_item_in_a_food_stock():

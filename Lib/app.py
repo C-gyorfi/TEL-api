@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, make_response, jsonify
 from Lib.app_factory import app
 from Lib.db import db
 from Lib.models import FoodItem, food_items_schema, food_item_schema, FoodStock
@@ -13,11 +13,11 @@ def list_food_items(food_stock_id: int):
   try:
     food_items = FoodItem.query.filter_by(food_stock_id=food_stock_id).order_by(FoodItem.expiry_date.asc()).all()
     if not food_items:
-      return jsonify(errorCode="NOT_FOUND", message="The requested resource does not exist")
+      return make_response(jsonify(errorCode="NOT_FOUND", message="The requested resource does not exist"), 404)
     else:
       return jsonify(food_stock_id="{0}".format(food_stock_id), food_items=food_items_schema.dump(food_items))
   except Exception as e:
-    return jsonify(status='Something bad happened')
+    return make_response(jsonify(status=f'Something bad happened, error: {e}'), 500)
 
 @app.route('/api/<int:food_stock_id>/food_item/', methods=['POST'])
 def add_food_item_to_food_stock(food_stock_id):
@@ -31,7 +31,7 @@ def add_food_item_to_food_stock(food_stock_id):
 
     return jsonify(food_item_schema.dump(new_item))
   else:
-    return jsonify(errorCode='NOT_FOUND', message='Food stock does not exist')
+    return make_response(jsonify(errorCode='NOT_FOUND', message='Food stock does not exist'), 404)
 
 @app.route('/api/food_item/<int:id>', methods=['DELETE'])
 def delete_item_from_food_stock(id):
@@ -41,7 +41,7 @@ def delete_item_from_food_stock(id):
     db.session.commit()
     return jsonify(message=f'Successfully deleted the following item: {food_item.name}')
   else:
-    return jsonify(errorCode='NOT_FOUND', message='Food item not found')
+    return make_response(jsonify(errorCode='NOT_FOUND', message='Food item not found'), 404)
 
 @app.cli.command('db_create')
 def db_create():
