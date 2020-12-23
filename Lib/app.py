@@ -33,7 +33,7 @@ def add_food_item_to_food_stock(food_stock_id):
   else:
     return make_response(jsonify(errorCode='NOT_FOUND', message='Food stock does not exist'), 404)
 
-@app.route('/api/food_item/<int:id>', methods=['DELETE'])
+@app.route('/api/food_item/<int:id>/', methods=['DELETE'])
 def delete_item_from_food_stock(id):
   food_item = FoodItem.query.get(id)
   if food_item:

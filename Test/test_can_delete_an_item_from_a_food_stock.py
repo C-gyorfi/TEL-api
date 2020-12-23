@@ -13,7 +13,7 @@ def setup(request):
     db.create_all()
 
 def test_when_food_stock_does_not_exists():
-    response = app.test_client().delete('/api/food_item/1')
+    response = app.test_client().delete('/api/food_item/1/')
     assert_that(response.status_code).is_equal_to(404)
     assert_that(response.data).contains(b'{"errorCode":"NOT_FOUND","message":"Food item not found"}\n')
 
@@ -26,7 +26,7 @@ def test_can_delete_a_food_item():
     db.session.commit()
 
     # When I call the delete endpoint with the id
-    response = app.test_client().delete('/api/food_item/1')
+    response = app.test_client().delete('/api/food_item/1/')
 
     # Then I can see the food item deleted
     assert_that(response.status_code).is_equal_to(200)
