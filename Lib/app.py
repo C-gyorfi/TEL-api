@@ -2,6 +2,7 @@ from flask import request, make_response, jsonify
 from Lib.app_factory import app
 from Lib.db import db
 from Lib.models import FoodItem, food_items_schema, food_item_schema, FoodStock
+from Lib.authorizer import Authorizer
 from datetime import datetime
 
 @app.route('/')
@@ -10,6 +11,9 @@ def home():
 
 @app.route('/api/<int:food_stock_id>/food_items/')
 def list_food_items(food_stock_id: int):
+  if not Authorizer(request).valid():
+    return make_response(jsonify(errorCode="UNAUTHORIZED", message="Invalid authorization data"), 401)
+
   try:
     food_items = FoodItem.query.filter_by(food_stock_id=food_stock_id).order_by(FoodItem.expiry_date.asc()).all()
     if not food_items:
