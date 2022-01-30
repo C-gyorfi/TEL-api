@@ -1,6 +1,6 @@
 class Authorizer():
     def __init__(self, request): 
-        self.token = request.headers['Authorization']
+        self.token = request.headers.get('Authorization', None)
 
     def valid(self):
       if not self.token: return False
